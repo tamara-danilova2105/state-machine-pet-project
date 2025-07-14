@@ -20,24 +20,28 @@ export const SummaryStep = ({
   onComplete,
   onBack
 }: SummaryStepProps) => {
-  const selectedTransferSlot = data.transfer?.slotId ? 
-    transferSlots.find(slot => slot.id === data.transfer.slotId) : null;
-  
-  const selectedAccommodation = data.accommodation ?
-    accommodationOptions.find(opt => opt.id === data.accommodation.optionId) : null;
-  
-  const selectedActivities = activities.filter(activity => 
-    data.activities.includes(activity.id)
+  const { transfer = null, accommodation = null, activities: selectedIds = [] } = data;
+
+  const selectedTransferSlot = transfer?.slotId
+    ? transferSlots.find(slot => slot.id === transfer.slotId)
+    : null;
+
+  const selectedAccommodation = accommodation
+    ? accommodationOptions.find(opt => opt.id === accommodation.optionId)
+    : null;
+
+  const selectedActivities = activities.filter(activity =>
+    selectedIds.includes(activity.id)
   );
 
-  const invitedGuests = data.accommodation?.guestIds.map(guestId => 
-    users.find(user => user.id === guestId)
-  ).filter(Boolean) || [];
+  const invitedGuests = accommodation?.guestIds
+    .map(guestId => users.find(user => user.id === guestId))
+    .filter(Boolean) || [];
 
   return (
     <div className="max-w-4xl mx-auto">
       <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">Подтверждение регистрации</h2>
-      
+
       <div className="space-y-6">
         {/* Трансфер */}
         <div className="bg-white p-6 rounded-xl shadow-lg">
@@ -70,7 +74,7 @@ export const SummaryStep = ({
           <div className="text-gray-700">
             <p className="font-semibold">{selectedAccommodation?.name}</p>
             <p className="text-sm text-gray-600 mb-3">{selectedAccommodation?.description}</p>
-            
+
             {invitedGuests.length > 0 && (
               <div>
                 <p className="font-semibold mb-2">Приглашенные соседи:</p>
@@ -120,7 +124,7 @@ export const SummaryStep = ({
           <h3 className="text-lg font-semibold text-green-800">Готово к отправке!</h3>
         </div>
         <p className="text-green-700">
-          Пожалуйста, проверьте все данные и подтвердите регистрацию. 
+          Пожалуйста, проверьте все данные и подтвердите регистрацию.
           После подтверждения вы получите письмо с деталями мероприятия.
         </p>
       </div>

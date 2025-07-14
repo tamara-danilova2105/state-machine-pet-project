@@ -7,7 +7,7 @@ export interface RegistrationContext {
   invitationId?: string;
 }
 
-export type RegistrationEvent = 
+export type RegistrationEvent =
   | { type: 'START_REGISTRATION' }
   | { type: 'SELECT_TRANSFER'; transfer: { type: 'self' | 'organized'; slotId?: string } }
   | { type: 'SELECT_ACCOMMODATION'; accommodation: { optionId: string; guestIds: string[] } }
@@ -18,11 +18,15 @@ export type RegistrationEvent =
   | { type: 'GO_BACK' }
   | { type: 'RESTART' };
 
-export const registrationMachine = createMachine<RegistrationContext, RegistrationEvent>({
+export const registrationMachine = createMachine({
   id: 'registration',
   initial: 'welcome',
   context: {
     data: {} as RegistrationData
+  },
+  types: {
+    context: {} as RegistrationContext,
+    events: {} as RegistrationEvent
   },
   states: {
     welcome: {
@@ -45,12 +49,12 @@ export const registrationMachine = createMachine<RegistrationContext, Registrati
       on: {
         ACCEPT_INVITATION: {
           target: 'activities',
-          actions: assign({
-            data: ({ context, event }) => ({
+          actions: assign(({ context, event }) => ({
+            data: {
               ...context.data,
               invitationId: event.invitationId
-            })
-          })
+            }
+          }))
         },
         REJECT_INVITATION: 'accommodation'
       }
@@ -59,12 +63,12 @@ export const registrationMachine = createMachine<RegistrationContext, Registrati
       on: {
         SELECT_TRANSFER: {
           target: 'accommodation',
-          actions: assign({
-            data: ({ context, event }) => ({
+          actions: assign(({ context, event }) => ({
+            data: {
               ...context.data,
               transfer: event.transfer
-            })
-          })
+            }
+          }))
         },
         GO_BACK: 'welcome'
       }
@@ -73,12 +77,12 @@ export const registrationMachine = createMachine<RegistrationContext, Registrati
       on: {
         SELECT_ACCOMMODATION: {
           target: 'activities',
-          actions: assign({
-            data: ({ context, event }) => ({
+          actions: assign(({ context, event }) => ({
+            data: {
               ...context.data,
               accommodation: event.accommodation
-            })
-          })
+            }
+          }))
         },
         GO_BACK: 'transfer'
       }
@@ -87,12 +91,12 @@ export const registrationMachine = createMachine<RegistrationContext, Registrati
       on: {
         SELECT_ACTIVITIES: {
           target: 'summary',
-          actions: assign({
-            data: ({ context, event }) => ({
+          actions: assign(({ context, event }) => ({
+            data: {
               ...context.data,
               activities: event.activities
-            })
-          })
+            }
+          }))
         },
         GO_BACK: [
           {

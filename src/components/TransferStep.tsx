@@ -23,23 +23,21 @@ export const TransferStep = ({ transferSlots, onSelect, onBack }: TransferStepPr
   return (
     <div className="max-w-4xl mx-auto">
       <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">Выберите способ добраться</h2>
-      
+
       <div className="grid md:grid-cols-2 gap-8 mb-8">
-        <div 
-          className={`bg-white p-6 rounded-xl shadow-lg cursor-pointer transition-all duration-200 ${
-            selectedType === 'self' ? 'ring-4 ring-blue-500 scale-105' : 'hover:shadow-xl'
-          }`}
+        <div
+          className={`bg-white p-6 rounded-xl shadow-lg cursor-pointer transition-all duration-200 ${selectedType === 'self' ? 'ring-4 ring-blue-500 scale-105' : 'hover:shadow-xl'
+            }`}
           onClick={() => setSelectedType('self')}
         >
           <Car className="w-12 h-12 text-blue-500 mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-center mb-2">Самостоятельно</h3>
           <p className="text-gray-600 text-center">Добираюсь своим транспортом</p>
         </div>
-        
-        <div 
-          className={`bg-white p-6 rounded-xl shadow-lg cursor-pointer transition-all duration-200 ${
-            selectedType === 'organized' ? 'ring-4 ring-green-500 scale-105' : 'hover:shadow-xl'
-          }`}
+
+        <div
+          className={`bg-white p-6 rounded-xl shadow-lg cursor-pointer transition-all duration-200 ${selectedType === 'organized' ? 'ring-4 ring-green-500 scale-105' : 'hover:shadow-xl'
+            }`}
           onClick={() => setSelectedType('organized')}
         >
           <Bus className="w-12 h-12 text-green-500 mx-auto mb-4" />
@@ -58,12 +56,16 @@ export const TransferStep = ({ transferSlots, onSelect, onBack }: TransferStepPr
             {transferSlots.map((slot) => (
               <div
                 key={slot.id}
-                className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
-                  selectedSlot === slot.id
-                    ? 'border-green-500 bg-green-50'
-                    : 'border-gray-200 hover:border-green-300'
-                }`}
-                onClick={() => setSelectedSlot(slot.id)}
+                className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${selectedSlot === slot.id
+                  ? 'border-green-500 bg-green-50'
+                  : 'border-gray-200 hover:border-green-300'
+                  } ${slot.booked === slot.capacity ? 'pointer-events-none opacity-50' : ''}`
+                }
+                onClick={() => {
+                  if (slot.booked < slot.capacity) {
+                    setSelectedSlot(slot.id);
+                  }
+                }}
               >
                 <div className="text-center">
                   <div className="text-lg font-semibold text-gray-800">{slot.time}</div>
@@ -73,7 +75,7 @@ export const TransferStep = ({ transferSlots, onSelect, onBack }: TransferStepPr
                   </div>
                   <div className="mt-2">
                     <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div 
+                      <div
                         className="bg-green-500 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${(slot.booked / slot.capacity) * 100}%` }}
                       />

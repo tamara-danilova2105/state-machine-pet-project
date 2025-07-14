@@ -1,4 +1,3 @@
-import React from 'react';
 import { useMachine } from '@xstate/react';
 import { registrationMachine } from './machines/registrationMachine';
 import { ProgressBar } from './components/ProgressBar';
@@ -8,22 +7,26 @@ import { AccommodationStep } from './components/AccommodationStep';
 import { ActivitiesStep } from './components/ActivitiesStep';
 import { SummaryStep } from './components/SummaryStep';
 import { CompletedStep } from './components/CompletedStep';
-import { 
-  transferSlots, 
-  accommodationOptions, 
-  activities, 
-  mockUsers 
+import {
+  transferSlots,
+  accommodationOptions,
+  activities,
+  mockUsers,
+  invitationMock
 } from './data/mockData';
+import { InvitationStep } from './components/InvitationStep';
 
 const steps = ['Добро пожаловать', 'Трансфер', 'Размещение', 'Активности', 'Подтверждение'];
 
 function App() {
   const [state, send] = useMachine(registrationMachine);
-
+  
   const getCurrentStep = () => {
     switch (state.value) {
       case 'welcome': return 0;
-      case 'transfer': return 1;
+      case 'transfer':
+      case 'postTransferCheck': return 1;
+      case 'invitationPrompt':
       case 'accommodation': return 2;
       case 'activities': return 3;
       case 'summary': return 4;
@@ -37,18 +40,18 @@ function App() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-8 px-4">
       <div className="max-w-6xl mx-auto">
         {showProgressBar && (
-          <ProgressBar 
-            currentStep={getCurrentStep()} 
-            totalSteps={steps.length} 
+          <ProgressBar
+            currentStep={getCurrentStep()}
+            totalSteps={steps.length}
             steps={steps}
           />
         )}
-        
+
         <div className="mt-8">
           {state.matches('welcome') && (
             <WelcomeStep onStart={() => send({ type: 'START_REGISTRATION' })} />
           )}
-          
+
           {state.matches('transfer') && (
             <TransferStep
               transferSlots={transferSlots}
@@ -56,7 +59,18 @@ function App() {
               onBack={() => send({ type: 'GO_BACK' })}
             />
           )}
-          
+
+          {state.matches('invitationPrompt') && (
+            <InvitationStep
+              invitation={invitationMock}
+              accommodationOption={accommodationOptions.find(
+                (opt) => opt.id === invitationMock.accommodationId
+              )!}
+              onAccept={() => send({ type: 'ACCEPT_INVITATION', invitationId: invitationMock.id })}
+              onReject={() => send({ type: 'REJECT_INVITATION' })}
+            />
+          )}
+
           {state.matches('accommodation') && (
             <AccommodationStep
               accommodationOptions={accommodationOptions}
@@ -65,7 +79,7 @@ function App() {
               onBack={() => send({ type: 'GO_BACK' })}
             />
           )}
-          
+
           {state.matches('activities') && (
             <ActivitiesStep
               activities={activities}
@@ -73,7 +87,7 @@ function App() {
               onBack={() => send({ type: 'GO_BACK' })}
             />
           )}
-          
+
           {state.matches('summary') && (
             <SummaryStep
               data={state.context.data}
@@ -85,7 +99,7 @@ function App() {
               onBack={() => send({ type: 'GO_BACK' })}
             />
           )}
-          
+
           {state.matches('completed') && (
             <CompletedStep onRestart={() => send({ type: 'RESTART' })} />
           )}

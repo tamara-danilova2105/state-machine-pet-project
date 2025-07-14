@@ -32,7 +32,7 @@ export const CompletedStep = ({ onRestart }: CompletedStepProps) => {
             <Calendar className="w-6 h-6 text-green-500 mt-1 mr-3" />
             <div className="text-left">
               <p className="font-semibold">Добавьте в календарь</p>
-              <p className="text-sm text-gray-600">15-16 декабря 2024, База отдыха "Лесная"</p>
+              <p className="text-sm text-gray-600">19-20 июля 2025, База отдыха "Лесная"</p>
             </div>
           </div>
           

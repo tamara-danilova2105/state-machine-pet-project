@@ -22,29 +22,47 @@ export const registrationMachine = createMachine({
   id: 'registration',
   initial: 'welcome',
   context: {
-    data: {} as RegistrationData
+    data: {} as RegistrationData,
+    invitationId: '1234', // моковое приглашение
   },
   types: {
     context: {} as RegistrationContext,
-    events: {} as RegistrationEvent
+    events: {} as RegistrationEvent,
   },
   states: {
     welcome: {
       on: {
-        START_REGISTRATION: 'checkInvitation'
-      }
+        START_REGISTRATION: 'transfer',
+      },
     },
-    checkInvitation: {
+
+    transfer: {
+      on: {
+        SELECT_TRANSFER: {
+          target: 'postTransferCheck',
+          actions: assign(({ context, event }) => ({
+            data: {
+              ...context.data,
+              transfer: event.transfer,
+            },
+          })),
+        },
+        GO_BACK: 'welcome',
+      },
+    },
+
+    postTransferCheck: {
       always: [
         {
           target: 'invitationPrompt',
-          guard: ({ context }) => !!context.invitationId
+          guard: ({ context }) => !!context.invitationId,
         },
         {
-          target: 'transfer'
-        }
-      ]
+          target: 'accommodation',
+        },
+      ],
     },
+
     invitationPrompt: {
       on: {
         ACCEPT_INVITATION: {
@@ -52,27 +70,14 @@ export const registrationMachine = createMachine({
           actions: assign(({ context, event }) => ({
             data: {
               ...context.data,
-              invitationId: event.invitationId
-            }
-          }))
+              invitationId: event.invitationId,
+            },
+          })),
         },
-        REJECT_INVITATION: 'accommodation'
-      }
+        REJECT_INVITATION: 'accommodation',
+      },
     },
-    transfer: {
-      on: {
-        SELECT_TRANSFER: {
-          target: 'accommodation',
-          actions: assign(({ context, event }) => ({
-            data: {
-              ...context.data,
-              transfer: event.transfer
-            }
-          }))
-        },
-        GO_BACK: 'welcome'
-      }
-    },
+
     accommodation: {
       on: {
         SELECT_ACCOMMODATION: {
@@ -80,13 +85,14 @@ export const registrationMachine = createMachine({
           actions: assign(({ context, event }) => ({
             data: {
               ...context.data,
-              accommodation: event.accommodation
-            }
-          }))
+              accommodation: event.accommodation,
+            },
+          })),
         },
-        GO_BACK: 'transfer'
-      }
+        GO_BACK: 'transfer',
+      },
     },
+
     activities: {
       on: {
         SELECT_ACTIVITIES: {
@@ -94,31 +100,33 @@ export const registrationMachine = createMachine({
           actions: assign(({ context, event }) => ({
             data: {
               ...context.data,
-              activities: event.activities
-            }
-          }))
+              activities: event.activities,
+            },
+          })),
         },
         GO_BACK: [
           {
             target: 'accommodation',
-            guard: ({ context }) => !context.invitationId
+            guard: ({ context }) => !context.invitationId,
           },
           {
-            target: 'invitationPrompt'
-          }
-        ]
-      }
+            target: 'invitationPrompt',
+          },
+        ],
+      },
     },
+
     summary: {
       on: {
         COMPLETE_REGISTRATION: 'completed',
-        GO_BACK: 'activities'
-      }
+        GO_BACK: 'activities',
+      },
     },
+
     completed: {
       on: {
-        RESTART: 'welcome'
-      }
-    }
-  }
+        RESTART: 'welcome',
+      },
+    },
+  },
 });

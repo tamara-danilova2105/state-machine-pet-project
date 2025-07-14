@@ -15,7 +15,7 @@ export const transferSlots: TransferSlot[] = [
   { id: '1', time: '18:00', capacity: 50, booked: 45 },
   { id: '2', time: '18:30', capacity: 50, booked: 32 },
   { id: '3', time: '19:00', capacity: 50, booked: 28 },
-  { id: '4', time: '19:30', capacity: 50, booked: 15 },
+  { id: '4', time: '19:30', capacity: 50, booked: 50 },
 ];
 
 export const accommodationOptions: AccommodationOption[] = [
@@ -109,4 +109,15 @@ export const mockInvitations: Invitation[] = [
   }
 ];
 
-export const currentUser = mockUsers[0];
+export const invitationMock: Invitation = {
+  id: '1234',
+  accommodationId: '1',
+  fromUser: {
+    id: 'u1',
+    name: 'Анна Смирнова',
+    department: 'Маркетинг',
+    position: 'Менеджер',
+  },
+  toUserId: 'u2',
+  status: 'pending',
+};

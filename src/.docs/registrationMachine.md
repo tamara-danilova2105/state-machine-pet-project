@@ -27,14 +27,14 @@
 
 ### welcome
 - Показываем информацию о корпоративе.
-- Переход к `transfer` после клика на "Зарегистрироваться".
+- Переход по START_REGISTRATION к `transfer` после клика на "Зарегистрироваться".
 
 ### transfer
 - Выбор способа добраться до мероприятия.
 - Если выбран трансфер, можно указать слот отправления.
 - `SELECT_TRANSFER → postTransferCheck`
 
-### postTransferCheck
+### postTransferCheck (промежуточное состояние)
 - Если есть `invitationId`, переходим в `invitationPrompt`.
 - Иначе сразу — в `accommodation`.
 
@@ -49,14 +49,17 @@
 
 ### activities
 - Можно выбрать не более 2 активностей.
+- Если пользователь был без приглашения → GO_BACK → accommodation.
+- Если с приглашением → GO_BACK → invitationPrompt.
 - Активности с пересечением по времени — блокируются.
 
 ### summary
 - Просмотр введённой информации перед отправкой.
+- COMPLETE_REGISTRATION → completed.
 
 ### completed
 - Финальный экран.
-- Возможность начать заново.
+- Возможность начать заново: RESTART → welcome.
 
 ---
 
